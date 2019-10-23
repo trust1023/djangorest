@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import User
 from .validate import validate_str
+import os
 
 class CreateUser(serializers.ModelSerializer):
     password = serializers.CharField(max_length=64,min_length=6, write_only=True,validators=[validate_str])
@@ -9,7 +10,7 @@ class CreateUser(serializers.ModelSerializer):
     sec_key = serializers.CharField(max_length=64, write_only=True)
 
     def validate(self, attrs):
-        key = 'ican'
+        key = os.environ['sec_key']
         sec_key = attrs['sec_key']
         if key != sec_key:
             raise serializers.ValidationError('验证密钥失败')
