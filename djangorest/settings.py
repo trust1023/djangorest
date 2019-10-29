@@ -38,14 +38,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'djangorest_login',
-    'gunicorn',
+    #'gunicorn',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -105,6 +105,31 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+
+CACHES={
+    'default':{
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION':'redis://106.12.34.175:6379/12', # 指定db12
+        #'TIMEOUT':300,
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',  # 指定连接Redis的客户端类
+            'PASSWORD': '123456s',
+             # "SOCKET_CONNECT_TIMEOUT": 5,  # in seconds
+             # "SOCKET_TIMEOUT": 5,  # in seconds
+             # "CONNECTION_POOL_KWARGS": {"max_connections": 100},
+             # "CONNECTION_POOL_CLASS": "myproj.mypool.MyOwnPool",
+        }
+    }
+}
+
+REST_FRAMEWORK_EXTENSIONS = {
+    # 缓存时间
+    'DEFAULT_CACHE_RESPONSE_TIMEOUT': 60 ,
+    # 缓存存储 default 表示缓存设置中设置的默认存储位置
+    'DEFAULT_USE_CACHE': 'default',
+}
+
 
 import datetime
 

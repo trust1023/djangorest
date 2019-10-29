@@ -4,6 +4,8 @@ from .validate import validate_str
 import jwt
 import datetime
 from django.conf import settings
+#from django.utils import timezone
+
 
 # Create your models here.
 
@@ -44,5 +46,18 @@ class User(models.Model):
         }, settings.SECRET_KEY, algorithm='HS256')
 
         return token.decode('utf-8')
+
+
+class Code(models.Model):
+    code = models.CharField(max_length=32,verbose_name='验证码')
+    mobile = models.CharField(max_length=11, unique=True, verbose_name='手机号')
+    add_time = models.DateTimeField(auto_now=True,verbose_name='添加时间')
+
+    class Meta:
+        verbose_name = '短信验证码'
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.code
 
 
