@@ -80,9 +80,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'test',
-        'HOST': os.environ['myhost'],#
-        'USER': os.environ['mysql_user'],#
-        'PASSWORD': os.environ['mysql_pwd'],#
+        'HOST': os.environ['myhost'],
+        'USER': os.environ['mysql_user'],
+        'PASSWORD': os.environ['mysql_pwd'],
         'PORT': '3306',
     }
 }
@@ -106,15 +106,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+redis_host = os.environ['redis_host']
+redis_pwd = os.environ['redis_pwd']
 CACHES={
     'default':{
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION':'redis://106.12.34.175:6379/12', # 指定db12
+        'LOCATION':'redis://%s:6379/12'%redis_host, # 指定db12
         #'TIMEOUT':300,
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',  # 指定连接Redis的客户端类
-            'PASSWORD': '123456s',
+            'PASSWORD': redis_pwd,
              # "SOCKET_CONNECT_TIMEOUT": 5,  # in seconds
              # "SOCKET_TIMEOUT": 5,  # in seconds
              # "CONNECTION_POOL_KWARGS": {"max_connections": 100},
