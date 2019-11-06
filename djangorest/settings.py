@@ -106,12 +106,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-redis_host = os.environ['redis_host']
+myhost = os.environ['redis_host']
 redis_pwd = os.environ['redis_pwd']
 CACHES={
     'default':{
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION':'redis://%s:6379/12'%redis_host, # 指定db12
+        'LOCATION':'redis://%s:6379/12'%myhost, # 指定db12
         #'TIMEOUT':300,
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',  # 指定连接Redis的客户端类
