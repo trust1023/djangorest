@@ -3,6 +3,7 @@ from .models import User,Code
 from .validate import validate_str
 import os
 import datetime
+from djangorest.settings import secKey
 
 class CreateUser(serializers.ModelSerializer):
     password = serializers.CharField(max_length=64,min_length=6, write_only=True,validators=[validate_str])
@@ -12,7 +13,7 @@ class CreateUser(serializers.ModelSerializer):
     snscode = serializers.CharField(max_length=10,write_only=True)
 
     def validate(self, attrs):
-        key = os.environ['sec_key']
+        key = secKey
         sec_key = attrs['sec_key']
         if key != sec_key:
             raise serializers.ValidationError('验证密钥失败')
@@ -33,7 +34,7 @@ class CreateUser(serializers.ModelSerializer):
         if verify_records:
             last_record = verify_records[0]
             # 判断验证码是否过期
-            two_minutes_ago = datetime.datetime.now() - datetime.timedelta(hours=0, minutes=2, seconds=0)  # 获取5分钟之前的时间
+            two_minutes_ago = datetime.datetime.now() - datetime.timedelta(hours=0, minutes=2, seconds=0)  # 获取2分钟之前的时间
             if last_record.add_time < two_minutes_ago:
                 raise serializers.ValidationError('验证码过期')
             # 判断验证码是否正确
@@ -63,3 +64,6 @@ class UserInfoSer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id','username','mobile')
+
+class MySer(serializers.Serializer):
+    pass

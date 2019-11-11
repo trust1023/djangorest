@@ -38,6 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'djangorest_login',
+    'rest_framework',
+    'django_filters',
+    'djangorest_jiekou',
+    'djcelery',
     #'gunicorn',
 ]
 
@@ -76,17 +80,46 @@ WSGI_APPLICATION = 'djangorest.wsgi.application'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 import os
 
+
+
+
+
+myhost = os.environ['myhost']
+redis_pwd = os.environ['redis_pwd']
+
+mysql_user = os.environ['mysql_user']
+mysql_pwd = os.environ['mysql_pwd']
+mysql_db = os.environ['mysql_db']
+
+secKey = os.environ['sec_key']
+email_user = os.environ['email_user']
+email_pwd = os.environ['email_pwd']
+email_host = os.environ['email_host']
+pymongo_user = os.environ['pymongo_user']
+pymongo_pwd = os.environ['pymongo_pwd']
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'test',
-        'HOST': os.environ['myhost'],
-        'USER': os.environ['mysql_user'],
-        'PASSWORD': os.environ['mysql_pwd'],
+        'HOST': myhost,
+        'USER': mysql_user,
+        'PASSWORD': mysql_pwd,
         'PORT': '3306',
     }
 }
 
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.AutoSchema',
+    #'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
+'UNAUTHENTICATED_USER': None,
+    'UNAUTHENTICATED_TOKEN': None,
+  "DEFAULT_THROTTLE_RATES":{
+            "Hubery":"3/m",
+"Jun":"10/m",
+        },
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -106,8 +139,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-myhost = os.environ['redis_host']
-redis_pwd = os.environ['redis_pwd']
+
+
 CACHES={
     'default':{
         'BACKEND': 'django_redis.cache.RedisCache',
@@ -155,3 +188,29 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+
+
+
+
+
+#celery配置信息
+import djcelery
+djcelery.setup_loader()
+BROKER_URL = 'redis://:%s@%s:6379/6'%(redis_pwd,myhost)
+CELERY_IMPORTS = ('djangorest_jiekou.tasks')
+CELERY_TIMEZONE = 'Asia/Shanghai'
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+from celery.schedules import crontab
+from celery.schedules import timedelta
+
+CELERYBEAT_SCHEDULE = {    #定时器策略
+    #定时任务一：　每隔30s运行一次
+    '测试定时器1': {
+        "task": "djangorest_jiekou.tasks.tsend_email",
+        "schedule": crontab(minute='56', hour='17'),  # or 'schedule':   timedelta(seconds=3),
+        #"schedule":timedelta(seconds=30),
+        "args": (),
+    },
+}

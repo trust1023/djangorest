@@ -15,8 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from rest_framework.documentation import include_docs_urls
+from djangorest_login.views import Mytest
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('loginapi/',include('djangorest_login.urls'))
+    path('loginapi/',include('djangorest_login.urls')),
+    path('api/',include('djangorest_jiekou.urls')),
+    path('docs/',include_docs_urls(title='后台接口文档')),
+    path('', Mytest.as_view()),
 ]

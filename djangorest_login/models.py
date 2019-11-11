@@ -30,7 +30,7 @@ class User(models.Model):
         return
 
     def check_pwd(self,password):
-        return check_password(self.password,password)
+        return check_password(password,self.password)
 
     @property
     def token(self):

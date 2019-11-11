@@ -25,7 +25,21 @@ class TokenAuth(BaseAuthentication):
             raise AuthenticationFailed('Token expired')
         except Exception:
             raise AuthenticationFailed('Can not get user object')
-        token_query = User.objects.filter(username=username)
-        if not token_query:
+        user = User.objects.filter(username=username)
+        if not user:
             raise AuthenticationFailed('username不存在')
-        return (username,auth[1])
+        return (user.first(),auth[1])
+
+class MyAuthentication(BaseAuthentication):
+    def authenticate(self, request):
+        token = request.GET.get('token')
+        if token:
+            try:
+                dict = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+                username = dict.get('data').get('username')
+                user = User.objects.get(username=username)
+                if user:
+                    return (user,token)
+            except:
+                pass
+        return None
