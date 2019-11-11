@@ -7,7 +7,7 @@ def send_email(context):
         try:
             yag = yagmail.SMTP(user=email_user, password=email_pwd, host=email_host)
             contents = [context]
-            yag.send(email_host, '测试发送', contents)
+            yag.send(email_user, '测试发送', contents)
             break
         except Exception as e:
             print(e.args)
